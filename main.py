@@ -34,7 +34,7 @@ if __name__ == '__main__':
                 if data.startswith('exit'):
                     break
                 if data.startswith('heartbeat'):
-                    conn.send('1'.encode('utf-8'))
+                    conn.send('1\n'.encode('utf-8'))
 
         finally:
             conn.close()
