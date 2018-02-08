@@ -1,6 +1,7 @@
 import requests
 import socket
 import os
+import signal
 from flask import Flask, render_template, redirect,request
 application = Flask(__name__)
 
@@ -36,6 +37,13 @@ def tell_html():
         if r.status_code != 200:
             return render_template('tell.html',result='Fail to deliver message :\n' + message + '\n')
         return render_template('tell.html',result='Message :\n' + message + '\nDelivered\n')
+
+@application.route('/crash/')
+@application.route('/crash')
+def crash_down():
+    os.kill(os.getppid(),signal.SIGTERM)
+    #os.kill(os.getpid(),signal.SIGKILL)
+    return '{} {}'.format(os.getpid(),os.getppid())
 
 if __name__ == '__main__':
     application.run()
