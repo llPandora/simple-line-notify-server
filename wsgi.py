@@ -1,5 +1,6 @@
 import requests
 import socket
+import os
 from flask import Flask, render_template, redirect,request
 application = Flask(__name__)
 
@@ -11,7 +12,11 @@ def root_html():
 
 @application.route('/index')
 def index_html(name=None):
-    return render_template('index.html')
+    try:
+        hostname = os.environ['HOSTNAME']
+    except KeyError:
+        hostname = 'Unknown'
+    return render_template('index.html',hostname=hostname)
 
 
 @application.route('/tell/',methods=['POST','GET'])
