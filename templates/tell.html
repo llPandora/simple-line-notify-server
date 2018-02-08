@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><title>Sending form</title></head>
+<body>
+<h1>Sending Message to llPandora</h1>
+<form action="/tell" method="post">
+  Message:<br>
+  <input type="text" name="message" value="">
+  <br><br>
+  <input type="submit" value="Send">
+</form>
+{% if result %}
+  <p>{{ result }}</p>
+{% else %}
+  <p></p>
+{% endif %}
+</body>
+</html>
+

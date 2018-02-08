@@ -1,44 +1,36 @@
 import requests
 import socket
+from flask import Flask, render_template, redirect,request
+app = Flask(__name__)
 
-if __name__ == '__main__':
+line_token = 'UawjDRkARXD9k49XaSlEIe3iOwpieifdApbjo3wtrI1'
 
-    line_token = 'UawjDRkARXD9k49XaSlEIe3iOwpieifdApbjo3wtrI1'
+@app.route('/')
+def root_html():
+    return redirect('index')
 
-    TCP_IP = '0.0.0.0'
-    TCP_PORT = 8000
-    BUFFER_SIZE = 1024  # Normally 1024, but we want fast response
+@app.route('/index')
+def index_html(name=None):
+    return render_template('index.html')
 
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((TCP_IP, TCP_PORT))
-    s.listen(1)
-    while(1):
-        print('waiting for connection')
-        conn, addr = s.accept()
 
-        try:
-            while (1):
-                data = conn.recv(BUFFER_SIZE).decode('utf-8')
-                print(data)
-                if data.startswith('tel '):
-                    # specify headers & parameters
-                    headers = {'Authorization': 'Bearer ' + line_token}
-                    params = {'message': data[4:]}
+@app.route('/tell/',methods=['POST','GET'])
+@app.route('/tell',methods=['POST','GET'])
+def tell_html():
+    if request.method == 'GET':
+        return render_template('tell.html',result='begin')
 
-                    # send request
-                    r = requests.post('https://notify-api.line.me/api/notify', params=params, headers=headers)
+    if request.method == 'POST':
+        message = request.form['message']
+        if message == None or message.strip()=='':
+            return render_template('tell.html',result='Empty message not delivered!\n')
 
-                    # notify response
-                    conn.send("status code : {}\n".format(r.status_code).encode('utf-8'))
-
-                if data.startswith('exit'):
-                    break
-                if data.startswith('heartbeat'):
-                    conn.send('1\n'.encode('utf-8'))
-
-        finally:
-            conn.close()
-
+        headers = {'Authorization': 'Bearer ' + line_token}
+        params = {'message': message}
+        r = requests.post('https://notify-api.line.me/api/notify', params=params, headers=headers)
+        if r.status_code != 200:
+            return render_template('tell.html',result='Fail to deliver message :\n' + message + '\n')
+        return render_template('tell.html',result='Message :\n' + message + '\nDelivered\n')
 
 
 #curl -X POST -H 'Authorization: Bearer UawjDRkARXD9k49XaSlEIe3iOwpieifdApbjo3wtrI1' -F 'message=foobar' https://notify-api.line.me/api/notify
