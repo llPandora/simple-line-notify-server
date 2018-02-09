@@ -1,0 +1,21 @@
+<html>
+	<head><title>Line Notifier Crash!! by llPandora</title></head>
+	<body>
+<h1 style="color: #4485b8;">This page will help you crash this server.</h1>
+<h2>by basically terminate its or its parent process.<strong style="color: #000;"></strong></h2>
+<p><strong style="color: #000;"></strong></p>
+<p><strong style="color: #000;">Terminate its process if hosted on Kubernetes</strong>&nbsp;</p>
+<p><strong style="color: #000;">Terminate its parent if hosted on Openshift</strong>&nbsp;</p>
+<p></p>
+<p></p>
+<p></p>
+<form action="/crash" method="post">
+  Please choose target to kill:<br>
+  <input type="radio" name="terminateTarget" value="pid" >PID : {% if pid %}{{ pid }}{% endif %}<br>
+  <input type="radio" name="terminateTarget" value="ppid" checked>PPID : {% if ppid %}{{ ppid }}{% endif %}<br>
+  <input type="submit" value="Send">
+</form>
+
+
+	</body>
+</html>

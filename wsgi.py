@@ -38,12 +38,20 @@ def tell_html():
             return render_template('tell.html',result='Fail to deliver message :\n' + message + '\n')
         return render_template('tell.html',result='Message :\n' + message + '\nDelivered\n')
 
-@application.route('/crash/')
-@application.route('/crash')
+@application.route('/crash/',methods=['POST','GET'])
+@application.route('/crash',methods=['POST','GET'])
 def crash_down():
-    os.kill(os.getppid(),signal.SIGTERM)
-    #os.kill(os.getpid(),signal.SIGKILL)
-    return '{} {}'.format(os.getpid(),os.getppid())
+    pid = os.getpid()
+    ppid = os.getppid()
+    if request.method == 'GET':
+        return render_template('crash.html',pid=pid,ppid=ppid)
+    if request.method == 'POST':
+        target = request.form['terminateTarget']
+        if target =='pid':
+            os.kill(pid,signal.SIGTERM)
+        if target =='ppid':
+            os.kill(ppid,signal.SIGTERM)
+    return render_template('crash.html',pid=pid,ppid=ppid)
 
 if __name__ == '__main__':
     application.run()
